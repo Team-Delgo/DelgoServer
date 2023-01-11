@@ -72,4 +72,31 @@ public class PhotoController extends CommController {
 
         return SuccessReturn(ncpLink);
     }
+
+    /*
+     * 멍플노트 등록
+     * Request Data : mungpleId, photo
+     * Response Data : 사진 저장된 URL
+     */
+    @PostMapping(value={"/upload/mungplenote/{mungpleId}","/upload/mungplenote"})
+    public ResponseEntity<?> uploadMungpleNote(@PathVariable Integer mungpleId, @RequestPart(required = false) MultipartFile photo) {
+        if (photo.isEmpty()) return ErrorReturn(ApiCode.PARAM_ERROR);
+
+        String ncpLink = photoService.uploadMungpleNote(photo);
+        mungpleService.register(mungpleService.getMungpleById(mungpleId).setDetailUrl(ncpLink)); // PhotoUrl 등록
+
+        return SuccessReturn(ncpLink);
+    }
+
+    /*
+     * photo file -> webp로 변환
+     * Request Data : photo
+     * Response Data : null
+     */
+    @PutMapping("/webp")
+    public ResponseEntity<?> convertWebp(@RequestPart MultipartFile photo) {
+        photoService.convertWebp(photo);
+
+        return SuccessReturn();
+    }
 }

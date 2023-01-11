@@ -45,4 +45,10 @@ public class Mungple {
 
         return this;
     }
+
+    public Mungple setDetailUrl(String detailUrl){
+        this.detailUrl = detailUrl;
+
+        return this;
+    }
 }

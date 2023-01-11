@@ -103,6 +103,29 @@ public class PhotoService extends CommService {
         }
     }
 
+    public String uploadMungpleNote(MultipartFile photo) {
+        String[] photoName = photo.getOriginalFilename().split("\\.");
+
+        String fileName = photoName[0] + ".webp";
+        String ncpLink = "https://kr.object.ncloudstorage.com/reward-mungplenote/" + fileName;
+
+        try {
+            File file = new File(DIR + photo.getOriginalFilename()); // 서버에 저장
+            photo.transferTo(file);
+
+            File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
+
+            objectStorageService.uploadObjects("reward-mungplenote", fileName, DIR + fileName); // Upload NCP
+            file.delete(); // 서버에 저장된 사진 삭제
+            webpFile.delete();
+
+            ncpLink += "?" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddhhmmss")) + numberGen(4, 1); // Cache 무효화
+            return ncpLink;
+        } catch (Exception e) {
+            throw new NullPointerException("PHOTO UPLOAD ERROR");
+        }
+    }
+
     public String uploadProfile(int userId, MultipartFile photo) {
         String[] type = Objects.requireNonNull(photo.getOriginalFilename()).split("\\."); // ex) png, jpg, jpeg
         String extension = type[type.length - 1];
@@ -125,6 +148,22 @@ public class PhotoService extends CommService {
             return ncpLink;
         } catch (Exception e) {
             return "error:" + e.getMessage();
+        }
+    }
+
+    // jpg -> webp 변경
+    public void convertWebp(MultipartFile photo) {
+        String[] photoName = photo.getOriginalFilename().split("\\.");
+        String fileName = photoName[0] + ".webp";
+
+        log.info("fileName : {}", fileName);
+        try {
+            File file = new File(DIR + "fileName" + ".jpg"); // 서버에 저장
+            photo.transferTo(file);
+
+            File webpFile = convertWebp(fileName, file);  // filePath에서 File 불러온 뒤 webp로 변환 후 저장.
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -68,6 +68,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				// delgo-map
 				.antMatchers("/map/mungple").permitAll()
 				.antMatchers("/survey/**").permitAll()
+				.antMatchers("/photo/webp").permitAll()
+				.antMatchers("/photo/upload/mungplenote/*").permitAll()
+				.antMatchers("/photo/upload/mungple/*").permitAll()
+				.antMatchers("/mungple").permitAll()
 
 				.antMatchers("/**").authenticated();
 //				.antMatchers("/**").permitAll();
